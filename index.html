@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Conference</title>
+</head>
+<body>
+    <!-- Container for Jitsi Meet -->
+    <div id="meet"></div>
+
+    <script src="https://meet.jit.si/external_api.js"></script>
+    <script>
+        const domain = "meet.jit.si";
+        const options = {
+            roomName: "ConferenceRoom" + Math.random().toString(36).substring(7), // Generate unique room name
+            width: "100%",
+            height: 800,
+            parentNode: document.querySelector('#meet'),
+            
+            // User Interface Configuration
+            configOverwrite: {
+                enableChat: true,
+                fileRecordingsEnabled: false, // Disabled as it requires moderator
+                desktopSharingEnabled: true,
+                prejoinPageEnabled: true,
+                disableDeepLinking: true,
+                disableModeratorIndicator: true, // Remove moderator indicators
+                enableLobby: false, // Disable lobby feature
+                remoteVideoMenu: {
+                    disableKick: false, // Prevent kicking participants
+                    disableGrantModerator: true // Prevent granting moderator rights
+                }
+            },
+            
+            interfaceConfigOverwrite: {
+                TOOLBAR_BUTTONS: [
+                    'microphone', 'camera', 'closedcaptions', 'desktop', 
+                    'fullscreen', 'fodeviceselection', 'hangup', 'profile', 
+                    'chat', 'sharedvideo', 'settings', 'raisehand', 'videoquality', 
+                    'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+                    'tileview', 'select-background', 'download', 'help'
+                ],
+                SETTINGS_SECTIONS: ['devices', 'language', 'profile', 'calendar'],
+                SHOW_JITSI_WATERMARK: false,
+                SHOW_WATERMARK_FOR_GUESTS: false,
+                TOOLBAR_ALWAYS_VISIBLE: true
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const api = new JitsiMeetExternalAPI(domain, options);
+
+            api.addEventListeners({
+                participantJoined: function(participant) {
+                    console.log("Participant joined:", participant);
+                },
+                participantLeft: function(participant) {
+                    console.log("Participant left:", participant);
+                },
+                audioMuteStatusChanged: function(muted) {
+                    console.log("Audio muted:", muted);
+                },
+                videoMuteStatusChanged: function(muted) {
+                    console.log("Video muted:", muted);
+                },
+                readyToClose: function() {
+                    console.log("Meeting ended");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
